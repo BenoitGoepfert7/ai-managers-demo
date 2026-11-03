@@ -18,10 +18,17 @@ public class GeoBlockingController {
     }
 
     @GetMapping("/geo/check")
-    public ResponseEntity<Map<String, Boolean>> check(@RequestParam("contentId") String p_contentId,
-                                                      @RequestParam("ip") String p_ip) {
-        boolean allowed = service.isAllowed(p_contentId, p_ip);
-        return ResponseEntity.status(allowed ? 200 : 451).body(Map.of("allowed", allowed));
+    public ResponseEntity<Map<String, Object>> check(@RequestParam("contentId") String p_contentId,
+                                                     @RequestParam("ip") String p_ip,
+                                                     @RequestParam(name = "subscriberId", required = false) String p_subscriberId) {
+        var decision = service.check(p_contentId, p_ip, p_subscriberId);
+        int status = switch (decision) {
+            case ALLOWED -> 200;
+            case UNKNOWN_SUBSCRIBER -> 404;
+            default -> 451;
+        };
+        return ResponseEntity.status(status)
+                .body(Map.of("allowed", decision == GeoBlockingSvc.Decision.ALLOWED, "decision", decision));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
