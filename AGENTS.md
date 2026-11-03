@@ -1,68 +1,33 @@
 # AGENTS.md
 
-Spring Boot 3.5 / Java 24 / Maven demo (package `fr.neosoft.aimanagersdemo`) with feature packages: `access`, `geoblocking`, `protection`.
+Spring Boot 3.5 / Java 24 / Maven demo, package `fr.neosoft.aimanagersdemo`, feature packages `access`, `geoblocking`, `protection`.
 
 ## Commands
 
-- Build + all tests: `mvn -q verify`
-- Single test class: `mvn -q -Dtest=AccessControllerTest test`
+- All tests: `mvn -q verify`
+- One class: `mvn -q -Dtest=AccessControllerTest test`
+- One package: `mvn -q -Ptest-<package> test` (a new feature package needs its own `test-<package>` profile in `pom.xml`)
 - Run: `mvn spring-boot:run`
-- Test one package (custom Maven profiles in `pom.xml`, each sets surefire's `test` property to that package):
-  - `mvn -q -Ptest-access test`
-  - `mvn -q -Ptest-geoblocking test`
-  - `mvn -q -Ptest-protection test`
-- A new feature package must get its own `test-<package>` profile.
 
-## Project-specific conventions (unusual, mandatory)
+## Code
 
-- Method and constructor parameters are prefixed with `p_` (e.g. `p_subscriberId`, `p_clock`). Fields, locals and lambda parameters keep plain camelCase.
-- Because of the prefix, Spring-bound parameters must name the binding explicitly: `@RequestParam("contentId") String p_contentId`, `@PathVariable("channel") String p_channel`.
-- Apply this to production code and to any parameter you add; do not rename unrelated existing parameters.
+- Standard Java naming (camelCase, PascalCase, UPPER_SNAKE constants). No prefixes or suffixes such as `p_`, `m_`, `Impl`.
+- Spring bindings name their parameter explicitly when it differs from the Java name; otherwise rely on `-parameters`.
+- Methods are at most 20 lines; extract private methods or collaborators beyond that.
+- Package by feature. Constructor injection, `final` fields, `record` for immutable data, `Optional` instead of `null`.
+- Thin controllers; logic in services. Inject `Clock` instead of `Instant.now()`.
+- Validate input at the boundary (`jakarta.validation`); invalid input returns `400`. No secrets in code, no sensitive data in logs.
+- Maven: inherit `spring-boot-starter-parent`, use starters, keep `pom.xml` changes minimal.
 
-## Java
+## Tests
 
-- Package by feature, not by layer. Keep controller, service and repository of a feature together.
-- Constructor injection only; fields `final`; no `@Autowired` on fields in production code.
-- Prefer `record` for immutable data (DTOs, value objects).
-- Return `Optional` rather than `null`; never return `null` collections.
-- Keep controllers thin: HTTP mapping and validation only, logic lives in services.
-- Inject `Clock` (see `ClockConfig`) instead of calling `Instant.now()` so time is testable.
-
-## Spring Boot
-
-- Validate inputs at the boundary with Bean Validation (`jakarta.validation`, `@NotBlank`, `@Valid`); invalid input returns `400`.
-- Use `@ConfigurationProperties` + `@Validated` for configuration instead of scattered `@Value`.
-- Never hardcode secrets; read them from environment/config.
-- Do not log sensitive data (tokens, subscriber details).
-
-## Maven
-
-- Inherit from `spring-boot-starter-parent`; do not set versions for dependencies it manages.
-- Use starters (`spring-boot-starter-*`); keep test dependencies in `test` scope.
-- Add a dependency only when needed, and keep `pom.xml` changes minimal.
-- Unit tests run with Surefire (`*Test`); if integration tests are added, run them with Failsafe (`*IT`) via `mvn verify`.
-
-## Testing (priority)
-
-Every behaviour change or bug fix ships with a test in the same change.
-
-- Use JUnit 5 + AssertJ (+ Mockito from `spring-boot-starter-test`).
-- Pick the narrowest test type:
-  1. Plain unit tests for services/logic: no Spring context, build the object with `new` and mock collaborators.
-  2. `@WebMvcTest(XController.class)` for HTTP mapping, status codes, validation and JSON; mock collaborators with `@MockitoBean` (or `@Import` the real light-weight beans, as existing tests do).
-  3. `@SpringBootTest` only for a few end-to-end wiring checks; it is slow.
-- Prefer `MockMvcTester` (AssertJ) for new web tests; keep the style of the file when editing existing tests.
-- Test mirrors main: `src/test/java/<same package>/<Class>Test.java`.
-- Name tests by behaviour (`deniesInactiveSubscription`), one behaviour per test, Arrange-Act-Assert.
-- Cover: happy path, each error/denial branch, boundary and invalid inputs (blank, null, unknown id).
-- Tests must be deterministic: no real network, no sleeping, no dependence on wall-clock (fix the `Clock`), no test-order dependence.
-- Fake external systems (e.g. `GeoIpClient`) behind an interface and mock/stub them in tests.
-- Use Testcontainers with `@ServiceConnection` for real infrastructure (DB, broker); never rely on a locally installed service.
-- Do not weaken or delete a test to make it pass; fix the code or explain why the expectation changed.
-- Run the smallest relevant test class first, then `mvn -q verify` before finishing.
+- JUnit 5 + AssertJ + Mockito; mirror the main package, name tests by behaviour, one behaviour per test.
+- Narrowest type first: plain unit test, then `@WebMvcTest`, `@SpringBootTest` only sparingly.
+- Deterministic: no network, no sleep, fixed `Clock`; fake external systems behind an interface.
+- Cover happy path, each denial/error branch and boundaries. Never weaken a test to make it pass.
 
 ## Workflow
 
-- Small, focused changes; do not touch unrelated code.
-- Follow the `git-workflow` skill for branches/commits and the `jira-ticket` skill for ticket handling.
-- Delegate to the `security` and `tester` custom agents for reviews and test writing.
+- Split work into sub-tasks; one dedicated commit per sub-task, containing its code and tests.
+- Run `mvn -q verify` and commit only when all tests pass.
+- Small focused changes; do not touch unrelated code. Follow the `git-workflow` and `jira-ticket` skills; delegate to the `security` and `tester` agents when relevant.

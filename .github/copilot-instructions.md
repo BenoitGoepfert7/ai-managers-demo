@@ -7,7 +7,8 @@ Project: Spring Boot 3.5, Java 24, Maven. Feature packages under `fr.neosoft.aim
 - Every code change needs a test in the same change: plain unit tests for services, `@WebMvcTest` for controllers, `@SpringBootTest` sparingly.
 - Tests use JUnit 5, AssertJ, Mockito; they must be deterministic (inject `Clock`, no real network).
 - Run `mvn -q -Dtest=<Class> test` for quick feedback, `mvn -q -Ptest-<package> test` (access, geoblocking, protection) for one package, and `mvn -q verify` before finishing.
-- Method/constructor parameters are prefixed `p_` (e.g. `p_subscriberId`); Spring bindings need explicit names: `@RequestParam("ip") String p_ip`.
+- Standard Java naming, no `p_`-style prefixes; methods at most 20 lines.
+- One commit per sub-task, with its tests passing (`mvn -q verify`).
 - Never commit secrets or log tokens/personal data.
 - Keep changes minimal and focused; do not refactor unrelated code.
 - Commit messages: Conventional Commits, prefixed by the Jira key when known (e.g. `feat(access): DEMO-12 validate channel`).
