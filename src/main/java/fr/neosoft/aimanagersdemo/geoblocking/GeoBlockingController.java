@@ -6,22 +6,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class GeoBlockingController {
 
     private final GeoBlockingSvc service;
 
-    public GeoBlockingController(GeoBlockingSvc p_service) {
-        this.service = p_service;
+    public GeoBlockingController(GeoBlockingSvc service) {
+        this.service = service;
     }
 
     @GetMapping("/geo/check")
-    public ResponseEntity<Map<String, Boolean>> check(@RequestParam("contentId") String p_contentId,
-                                                      @RequestParam("ip") String p_ip) {
-        boolean allowed = service.isAllowed(p_contentId, p_ip);
-        return ResponseEntity.status(allowed ? 200 : 451).body(Map.of("allowed", allowed));
+    public ResponseEntity<GeoDecision> check(@RequestParam("contentId") String contentId,
+                                             @RequestParam("ip") String ip,
+                                             @RequestParam(name = "subscriberId", required = false) String subscriberId) {
+        var decision = service.check(contentId, ip, Optional.ofNullable(subscriberId).filter(id -> !id.isBlank()));
+        return ResponseEntity.status(decision.allowed() ? 200 : 451).body(decision);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
