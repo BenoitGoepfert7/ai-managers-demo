@@ -15,7 +15,7 @@ public class SubscriberRepository {
             "s2", new Subscriber("s2", "Bob", true, Set.of("NEWS")),
             "s3", new Subscriber("s3", "Carol", false, Set.of("NEWS", "SPORT")));
 
-    public Optional<Subscriber> findById(String id) {
-        return Optional.ofNullable(data.get(id));
+    public Optional<Subscriber> findById(String p_id) {
+        return Optional.ofNullable(data.get(p_id));
     }
 }

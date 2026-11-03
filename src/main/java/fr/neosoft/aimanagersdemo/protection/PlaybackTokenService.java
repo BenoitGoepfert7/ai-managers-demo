@@ -19,20 +19,20 @@ public class PlaybackTokenService {
 
     private final Clock clock;
 
-    public PlaybackTokenService(Clock clock) {
-        this.clock = clock;
+    public PlaybackTokenService(Clock p_clock) {
+        this.clock = p_clock;
     }
 
-    public String issue(String subscriberId, String contentId) {
+    public String issue(String p_subscriberId, String p_contentId) {
         long expires = clock.instant().getEpochSecond() + TTL_SECONDS;
-        String payload = subscriberId + "|" + contentId + "|" + expires;
+        String payload = p_subscriberId + "|" + p_contentId + "|" + expires;
         return Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes(StandardCharsets.UTF_8))
                 + "." + sign(payload);
     }
 
-    public boolean isValid(String token, String subscriberId, String contentId) {
+    public boolean isValid(String p_token, String p_subscriberId, String p_contentId) {
         try {
-            String[] parts = token.split("\\.");
+            String[] parts = p_token.split("\\.");
             if (parts.length != 2) return false;
             String payload = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
             if (!MessageDigest.isEqual(sign(payload).getBytes(StandardCharsets.UTF_8), parts[1].getBytes(StandardCharsets.UTF_8))) {
@@ -40,19 +40,19 @@ public class PlaybackTokenService {
             }
             String[] fields = payload.split("\\|");
             return fields.length == 3
-                    && fields[0].equals(subscriberId)
-                    && fields[1].equals(contentId)
+                    && fields[0].equals(p_subscriberId)
+                    && fields[1].equals(p_contentId)
                     && Long.parseLong(fields[2]) > clock.instant().getEpochSecond();
         } catch (IllegalArgumentException e) {
             return false;
         }
     }
 
-    private String sign(String payload) {
+    private String sign(String p_payload) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(SECRET, "HmacSHA256"));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(mac.doFinal(p_payload.getBytes(StandardCharsets.UTF_8)));
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }

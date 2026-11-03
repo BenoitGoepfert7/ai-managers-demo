@@ -12,13 +12,14 @@ public class AccessController {
 
     private final AccessService service;
 
-    public AccessController(AccessService service) {
-        this.service = service;
+    public AccessController(AccessService p_service) {
+        this.service = p_service;
     }
 
     @GetMapping("/access/{subscriberId}/channels/{channel}")
-    public ResponseEntity<Map<String, Object>> check(@PathVariable String subscriberId, @PathVariable String channel) {
-        var decision = service.check(subscriberId, channel);
+    public ResponseEntity<Map<String, Object>> check(@PathVariable("subscriberId") String p_subscriberId,
+                                                     @PathVariable("channel") String p_channel) {
+        var decision = service.check(p_subscriberId, p_channel);
         var status = switch (decision) {
             case GRANTED -> 200;
             case UNKNOWN_SUBSCRIBER -> 404;

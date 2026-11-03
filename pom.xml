@@ -31,6 +31,27 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>test-access</id>
+            <properties>
+                <test>fr.neosoft.aimanagersdemo.access.*Test</test>
+            </properties>
+        </profile>
+        <profile>
+            <id>test-geoblocking</id>
+            <properties>
+                <test>fr.neosoft.aimanagersdemo.geoblocking.*Test</test>
+            </properties>
+        </profile>
+        <profile>
+            <id>test-protection</id>
+            <properties>
+                <test>fr.neosoft.aimanagersdemo.protection.*Test</test>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>

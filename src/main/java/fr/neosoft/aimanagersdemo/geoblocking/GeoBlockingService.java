@@ -13,11 +13,11 @@ public class GeoBlockingService {
             "world-cup-final", Set.of("FR", "DE"),
             "news-live", Set.of("FR", "DE", "US"));
 
-    public GeoBlockingService(GeoIpClient geoIp) {
-        this.geoIp = geoIp;
+    public GeoBlockingService(GeoIpClient p_geoIp) {
+        this.geoIp = p_geoIp;
     }
 
-    public boolean isAllowed(String contentId, String ip) {
-        return allowedCountries.getOrDefault(contentId, Set.of()).contains(geoIp.countryOf(ip));
+    public boolean isAllowed(String p_contentId, String p_ip) {
+        return allowedCountries.getOrDefault(p_contentId, Set.of()).contains(geoIp.countryOf(p_ip));
     }
 }

@@ -14,9 +14,9 @@ public class MockGeoIpClient implements GeoIpClient {
             "5.5.5.5", "DE");
 
     @Override
-    public String countryOf(String ip) {
-        String country = countries.get(ip);
-        if (country == null) throw new IllegalArgumentException("GeoIP lookup failed for " + ip);
+    public String countryOf(String p_ip) {
+        String country = countries.get(p_ip);
+        if (country == null) throw new IllegalArgumentException("GeoIP lookup failed for " + p_ip);
         return country;
     }
 }
