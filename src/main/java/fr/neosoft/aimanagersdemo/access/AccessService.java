@@ -1,5 +1,6 @@
 package fr.neosoft.aimanagersdemo.access;
 
+import fr.neosoft.aimanagersdemo.access.persistence.SubscriberRepo;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -7,9 +8,9 @@ public class AccessService {
 
     public enum Decision { GRANTED, UNKNOWN_SUBSCRIBER, SUBSCRIPTION_INACTIVE, CHANNEL_NOT_IN_PACKAGE }
 
-    private final SubscriberRepository repository;
+    private final SubscriberRepo repository;
 
-    public AccessService(SubscriberRepository p_repository) {
+    public AccessService(SubscriberRepo p_repository) {
         this.repository = p_repository;
     }
 

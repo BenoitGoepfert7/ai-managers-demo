@@ -1,4 +1,4 @@
-package fr.neosoft.aimanagersdemo.protection;
+package fr.neosoft.aimanagersdemo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

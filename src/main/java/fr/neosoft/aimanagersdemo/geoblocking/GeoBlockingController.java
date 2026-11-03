@@ -11,9 +11,9 @@ import java.util.Map;
 @RestController
 public class GeoBlockingController {
 
-    private final GeoBlockingService service;
+    private final GeoBlockingSvc service;
 
-    public GeoBlockingController(GeoBlockingService p_service) {
+    public GeoBlockingController(GeoBlockingSvc p_service) {
         this.service = p_service;
     }
 
@@ -25,7 +25,7 @@ public class GeoBlockingController {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<String> geoIpFailure(IllegalArgumentException p_e) {
-        return ResponseEntity.status(502).body(p_e.getMessage());
+    ResponseEntity<String> geoIpFailure(IllegalArgumentException e) {
+        return ResponseEntity.status(502).body(e.getMessage());
     }
 }

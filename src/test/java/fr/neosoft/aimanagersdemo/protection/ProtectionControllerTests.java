@@ -1,5 +1,6 @@
 package fr.neosoft.aimanagersdemo.protection;
 
+import fr.neosoft.aimanagersdemo.config.ClockConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ProtectionController.class)
 @Import({PlaybackTokenService.class, ClockConfig.class})
-class ProtectionControllerTest {
+class ProtectionControllerTests {
 
     @Autowired
     MockMvc mvc;

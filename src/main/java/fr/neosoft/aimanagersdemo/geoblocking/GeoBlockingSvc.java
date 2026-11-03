@@ -6,18 +6,18 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class GeoBlockingService {
+public class GeoBlockingSvc {
 
     private final GeoIpClient geoIp;
     private final Map<String, Set<String>> allowedCountries = Map.of(
             "world-cup-final", Set.of("FR", "DE"),
             "news-live", Set.of("FR", "DE", "US"));
 
-    public GeoBlockingService(GeoIpClient p_geoIp) {
+    public GeoBlockingSvc(GeoIpClient p_geoIp) {
         this.geoIp = p_geoIp;
     }
 
-    public boolean isAllowed(String p_contentId, String p_ip) {
-        return allowedCountries.getOrDefault(p_contentId, Set.of()).contains(geoIp.countryOf(p_ip));
+    public boolean isAllowed(String contentId, String ip) {
+        return allowedCountries.getOrDefault(contentId, Set.of()).contains(geoIp.countryOf(ip));
     }
 }

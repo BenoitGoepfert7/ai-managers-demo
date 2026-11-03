@@ -23,9 +23,9 @@ public class PlaybackTokenService {
         this.clock = p_clock;
     }
 
-    public String issue(String p_subscriberId, String p_contentId) {
+    public String issue(String subscriberId, String contentId) {
         long expires = clock.instant().getEpochSecond() + TTL_SECONDS;
-        String payload = p_subscriberId + "|" + p_contentId + "|" + expires;
+        String payload = subscriberId + "|" + contentId + "|" + expires;
         return Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes(StandardCharsets.UTF_8))
                 + "." + sign(payload);
     }

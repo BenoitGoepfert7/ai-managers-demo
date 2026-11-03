@@ -1,5 +1,6 @@
-package fr.neosoft.aimanagersdemo.access;
+package fr.neosoft.aimanagersdemo.access.persistence;
 
+import fr.neosoft.aimanagersdemo.access.Subscriber;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 /** Fake in-memory "database" of subscribers. */
 @Repository
-public class SubscriberRepository {
+public class SubscriberRepo {
 
     private final Map<String, Subscriber> data = Map.of(
             "s1", new Subscriber("s1", "Alice", true, Set.of("NEWS", "SPORT", "MOVIES")),

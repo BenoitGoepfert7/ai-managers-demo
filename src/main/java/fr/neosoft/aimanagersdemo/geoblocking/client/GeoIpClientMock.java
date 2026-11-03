@@ -1,12 +1,13 @@
-package fr.neosoft.aimanagersdemo.geoblocking;
+package fr.neosoft.aimanagersdemo.geoblocking.client;
 
+import fr.neosoft.aimanagersdemo.geoblocking.GeoIpClient;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /** Mock of the external GeoIP API so the demo runs standalone. */
 @Component
-public class MockGeoIpClient implements GeoIpClient {
+public class GeoIpClientMock implements GeoIpClient {
 
     private final Map<String, String> countries = Map.of(
             "81.2.69.1", "FR",
