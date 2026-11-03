@@ -1,5 +1,6 @@
 package fr.neosoft.aimanagersdemo.access;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,9 @@ public class AccessController {
     }
 
     @GetMapping("/access/{subscriberId}/channels/{channel}")
-    public ResponseEntity<Map<String, Object>> check(@PathVariable String subscriberId, @PathVariable String channel) {
+    public ResponseEntity<Map<String, Object>> check(
+            @PathVariable @NotBlank String subscriberId,
+            @PathVariable @NotBlank String channel) {
         var decision = service.check(subscriberId, channel);
         var status = switch (decision) {
             case GRANTED -> 200;

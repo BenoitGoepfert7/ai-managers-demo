@@ -6,6 +6,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.net.URI;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,5 +44,17 @@ class AccessControllerTest {
     void unknownSubscriber() throws Exception {
         mvc.perform(get("/access/nobody/channels/NEWS"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void rejectsBlankSubscriberId() throws Exception {
+        mvc.perform(get(URI.create("/access/%20/channels/NEWS")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void rejectsBlankChannel() throws Exception {
+        mvc.perform(get(URI.create("/access/s1/channels/%20")))
+                .andExpect(status().isBadRequest());
     }
 }
